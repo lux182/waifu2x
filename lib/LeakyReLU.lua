@@ -1,7 +1,8 @@
-if nn.LeakyReLU then
-   return
+if w2nn and w2nn.LeakyReLU then
+   return w2nn.LeakyReLU
 end
-local LeakyReLU, parent = torch.class('nn.LeakyReLU','nn.Module')
+
+local LeakyReLU, parent = torch.class('w2nn.LeakyReLU','nn.Module')
  
 function LeakyReLU:__init(negative_scale)
    parent.__init(self)
@@ -16,7 +17,7 @@ function LeakyReLU:updateOutput(input)
    
    return self.output
 end
- 
+
 function LeakyReLU:updateGradInput(input, gradOutput)
    self.gradInput:resizeAs(gradOutput)
    -- filter positive
@@ -27,4 +28,9 @@ function LeakyReLU:updateGradInput(input, gradOutput)
    self.gradInput:add(self.negative)
    
    return self.gradInput
+end
+
+function LeakyReLU:clearState()
+   nn.utils.clear(self, 'negative')
+   return parent.clearState(self)
 end
